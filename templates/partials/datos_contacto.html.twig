@@ -1,0 +1,8 @@
+<ul>
+    <li style="color: #7700ff;"><strong>{{ contacto.nombre }}</strong></li>
+    <li><strong>Teléfono</strong>: {{ contacto.telefono }}</li>
+    <li><strong>E-mail</strong>: {{ contacto.email }}</li>
+    {% if contacto.provincia %}
+        <li><strong>Provincia</strong>: {{ contacto.provincia.nombre }}</li>
+    {% endif %}
+</ul>

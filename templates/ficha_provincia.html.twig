@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Provincias
+{% endblock %}
+{% block body %}
+	<h1>Ficha de la provincia</h1>
+	{% if provincia %}
+		<ul>
+			<li style="color: #7700ff;">
+				<strong>Nombre: {{ provincia.nombre }}</strong>
+			</li>
+		</ul>
+	{% else %}
+		<p>provincia no encontrado</p>
+	{% endif %}
+{% endblock %}
