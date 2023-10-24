@@ -1,9 +1,23 @@
-body
-{
+body {
     background-color: #99ccff;
 }
 
-h1
-{
+h1 {
     border-bottom: 1px solid black;
+}
+
+.cont {
+    width: 350px;
+    padding: 10px;
+    border: 1px solid black;
+    margin: 20px;
+}
+
+.cont a {
+    text-decoration: none;
+    color: black;
+    border: 1px solid gray;
+    border-radius: 5px;
+    background-color: rgb(208, 226, 253);
+    padding: 5px;
 }

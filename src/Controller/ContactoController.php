@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Contacto;
 use App\Entity\Provincia;
+use App\Form\ConfigFormType;
 use App\Form\ContactoType;
 use App\Form\ProvinciaFormType;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,14 +18,33 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ContactoController extends AbstractController
 {
-    private $contactos = [
-        1 => ["nombre" => "Juan Pérez", "telefono" => "524142432", "email" => "juanp@ieselcaminas.org"],
-        2 => ["nombre" => "Ana López", "telefono" => "58958448", "email" => "anita@ieselcaminas.org"],
-        5 => ["nombre" => "Mario Montero", "telefono" => "5326824", "email" => "mario.mont@ieselcaminas.org"],
-        7 => ["nombre" => "Laura Martínez", "telefono" => "42898966", "email" => "lm2000@ieselcaminas.org"],
-        9 => ["nombre" => "Nora Jover", "telefono" => "54565859", "email" => "norajover@ieselcaminas.org"]
-    ];
 
+    //==============================================================================================================
+    //====CONFIG CONTACTO========================================================================================
+    #[Route('/contacto/config/{codigo}', name: 'config_contacto')]
+    public function configContacto(ManagerRegistry $doctrine, Request $request, $codigo)
+    {
+        $repositorio = $doctrine->getRepository(Contacto::class);
+        $contacto = $repositorio->find($codigo);
+
+        $formulario = $this->createForm(ConfigFormType::class, $contacto);
+
+        $formulario->handleRequest($request);
+
+        if ($formulario->isSubmitted() && $formulario->isValid()) {
+            $contacto = $formulario->getData();
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($contacto);
+            $entityManager->flush();
+        }
+
+
+        return $this->render('contacto/config.html.twig', ['formulario' => $formulario->createView(), 'contacto' => $contacto]);
+
+        if ($formulario->getClickedButton() === $formulario->get('editar')){
+            return $this->render('contacto/editar.html.twig', ['formulario' => $formulario->createView()]);
+        }
+    }
 
     //==============================================================================================================
     //====NUEVO CONTACTO============================================================================================

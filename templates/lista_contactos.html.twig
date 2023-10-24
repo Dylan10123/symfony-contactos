@@ -1,11 +1,15 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Contactos{% endblock %}
+{% block title %}Contactos
+{% endblock %}
 {% block body %}
 	<h1>Listado de contactos</h1>
 	{% if contactos %}
 		{% for contacto in contactos %}
-			{{ include ('partials/datos_contacto.html.twig', {'contacto': contacto}) }}
+			<div class="cont">
+				{{ include ('partials/datos_contacto.html.twig', {'contacto': contacto}) }}
+				<a href="/contacto/config/{{contacto.id}}">Config</a>
+			</div>
 		{% endfor %}
 	{% else %}
 		<p>No se han encontrado contactos</p>
