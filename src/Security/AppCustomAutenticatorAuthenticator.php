@@ -5,6 +5,7 @@ namespace App\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
@@ -49,7 +50,19 @@ class AppCustomAutenticatorAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // For example:
-        return new RedirectResponse($this->urlGenerator->generate('app_listaContactos'));
+        $session = $request->getSession();
+        $volverA = $session->get('returnTo');
+        $codigo = $session->get('codigo');
+
+        if ($volverA) {
+            if ($codigo) {
+                return new RedirectResponse($this->urlGenerator->generate($volverA, ['codigo' => $codigo]));
+            }
+
+            return new RedirectResponse($this->urlGenerator->generate($volverA));
+        }
+
+        return new RedirectResponse($this->urlGenerator->generate('index'));
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 

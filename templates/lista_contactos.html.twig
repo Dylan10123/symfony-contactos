@@ -4,11 +4,21 @@
 {% endblock %}
 {% block body %}
 	<h1>Listado de contactos</h1>
+	{% if app.user %}
+		<div class="mb-3 float-end">
+			Has iniciado sesión como 
+			{{ app.user.name }}<br>
+			<a href="{{ path('app_logout') }}" class="btn btn-outline-danger float-end">Logout</a>
+		</div>
+	{% endif %}
+
 	{% if contactos %}
 		{% for contacto in contactos %}
 			<div class="cont">
 				{{ include ('partials/datos_contacto.html.twig', {'contacto': contacto}) }}
-				<a href="/contacto/config/{{contacto.id}}">Config</a>
+				<a href="/contacto/config/{{contacto.id}}">
+					<img src="{{ asset('images/engranaje.png') }}"/>
+				</a>
 			</div>
 		{% endfor %}
 	{% else %}

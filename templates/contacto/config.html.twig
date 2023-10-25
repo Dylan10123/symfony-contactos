@@ -6,11 +6,17 @@
 {% block body %}
 	<h1>Contacto</h1>
 	{% if contacto %}
-		{{ include ('partials/datos_contacto.html.twig', {'contacto': contacto}) }}
+		<div class="cont-conf">
+			{{ include ('partials/datos_contacto.html.twig', {'contacto': contacto}) }}
+
+			<h3>Acciones</h3>
+			<hr>
+			<a href="/contacto/editar/{{contacto.id}}">Editar</a>
+			<a href="/contactos">Volver</a>
+			<a href="/contacto/delete/{{contacto.id}}" id="borrar">Borrar</a>
+		</div>
 	{% else %}
 		<p>Contacto no encontrado</p>
 	{% endif %}
-	<h3>Acciones</h3>
-    <hr>
-	{{form(formulario)}}
+
 {% endblock %}

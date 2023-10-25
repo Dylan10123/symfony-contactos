@@ -13,7 +13,7 @@
 
             {% if app.user %}
                 <div class="mb-3">
-                    You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                    You are logged in as {{ app.user.name }}, <a href="{{ path('app_logout') }}">Logout</a>
                 </div>
             {% endif %}
 
@@ -26,9 +26,10 @@
             <input type="hidden" name="_csrf_token"
                 value="{{ csrf_token('authenticate') }}"
             >
-            <button class="pull-right btn btn-lg sr-button" type="submit">
+            <button class="pull-right btn btn-lg sr-button btn-success" type="submit" style="margin-top:10px;">
                 Sign in
             </button>
+            <a href="register" class="pull-right btn btn-lg sr-button" style="background-color: #fafafa; margin-top:10px;">Registrate</a>
         </form>
     </div>
 </div>
