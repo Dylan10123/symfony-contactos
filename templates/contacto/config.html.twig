@@ -9,6 +9,8 @@
 		<div class="cont-conf">
 			{{ include ('partials/datos_contacto.html.twig', {'contacto': contacto}) }}
 
+			<img class="rounded" src="{{ asset('images/' ~ contacto.file) }}" />
+
 			<h3>Acciones</h3>
 			<hr>
 			<a href="/contacto/editar/{{contacto.id}}">Editar</a>

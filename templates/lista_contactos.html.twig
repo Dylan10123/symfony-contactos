@@ -3,12 +3,13 @@
 {% block title %}Contactos
 {% endblock %}
 {% block body %}
+	<a href="{{ path('app_logout') }}" class="btn btn-outline-danger float-end">Logout</a>
+	<a href="{{ path('nuevo_contacto') }}" class="btn float-end btn-secondary" style="margin-right: 10px;">Nuevo contacto</a>
 	<h1>Listado de contactos</h1>
 	{% if app.user %}
 		<div class="mb-3 float-end">
-			Has iniciado sesión como 
+			Has iniciado sesión como
 			{{ app.user.name }}<br>
-			<a href="{{ path('app_logout') }}" class="btn btn-outline-danger float-end">Logout</a>
 		</div>
 	{% endif %}
 

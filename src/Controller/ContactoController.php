@@ -16,6 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ContactoController extends AbstractController
 {
@@ -53,7 +57,7 @@ class ContactoController extends AbstractController
     //==============================================================================================================
     //====NUEVO CONTACTO============================================================================================
     #[Route('/contacto/nuevo', name: 'nuevo_contacto')]
-    public function nuevoContacto(ManagerRegistry $doctrine, Request $request, SessionInterface $session)
+    public function nuevoContacto(ManagerRegistry $doctrine, Request $request, SessionInterface $session, SluggerInterface $slugger)
     {
 
         if ($this->getUser()) {
@@ -67,6 +71,38 @@ class ContactoController extends AbstractController
                 $contacto = $formulario->getData();
                 $entityManager = $doctrine->getManager();
                 $entityManager->persist($contacto);
+                $entityManager->flush();
+
+                $file = $formulario->get('file')->getData();
+                if ($file) {
+                    $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    // this is needed to safely include the file name as part of the URL
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+
+                    // Move the file to the directory where images are stored
+                    try {
+
+                        $file->move(
+                            $this->getParameter('images_directory'),
+                            $newFilename
+                        );
+                        $filesystem = new Filesystem();
+                        $filesystem->copy(
+                            $this->getParameter('images_directory') . '/' . $newFilename,
+                            true
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+
+                    // updates the 'file$filename' property to store the PDF file name
+                    // instead of its contents
+                    $contacto->setFile($newFilename);
+                }
+                $image = $formulario->getData();
+                $entityManager = $doctrine->getManager();
+                $entityManager->persist($image);
                 $entityManager->flush();
 
                 return $this->redirectToRoute('ficha_contacto', ["codigo" => $contacto->getId()]);
@@ -107,7 +143,7 @@ class ContactoController extends AbstractController
     //==============================================================================================================
     //====MODIFICAR CONTACTO========================================================================================
     #[Route('/contacto/editar/{codigo}', name: 'editar_contacto')]
-    public function modContacto(ManagerRegistry $doctrine, Request $request, $codigo, SessionInterface $session)
+    public function modContacto(ManagerRegistry $doctrine, Request $request, $codigo, SessionInterface $session, SluggerInterface $slugger)
     {
         if ($this->getUser()) {
             $repositorio = $doctrine->getRepository(Contacto::class);
@@ -122,10 +158,43 @@ class ContactoController extends AbstractController
                 $entityManager = $doctrine->getManager();
                 $entityManager->persist($contacto);
                 $entityManager->flush();
+
+                $file = $formulario->get('file')->getData();
+                if ($file) {
+                    $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    // this is needed to safely include the file name as part of the URL
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+
+                    // Move the file to the directory where images are stored
+                    try {
+
+                        $file->move(
+                            $this->getParameter('images_directory'),
+                            $newFilename
+                        );
+                        $filesystem = new Filesystem();
+                        $filesystem->copy(
+                            $this->getParameter('images_directory') . '/' . $newFilename,
+                            true
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+
+                    // updates the 'file$filename' property to store the PDF file name
+                    // instead of its contents
+                    $contacto->setFile($newFilename);
+                }
+                $image = $formulario->getData();
+                $entityManager = $doctrine->getManager();
+                $entityManager->persist($image);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('ficha_contacto', ["codigo" => $contacto->getId()]);
             }
 
-
-            return $this->render('contacto/editar.html.twig', ['formulario' => $formulario->createView()]);
+            return $this->render('contacto/editar.html.twig', ['formulario' => $formulario->createView(), 'images' => $contacto]);
         } else {
             $session->set('codigo', $codigo);
             $session->set('returnTo', 'editar_contacto');

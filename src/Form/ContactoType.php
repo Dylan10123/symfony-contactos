@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Form;
 
@@ -9,6 +9,8 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 use App\Entity\Provincia;
 
@@ -21,8 +23,21 @@ class ContactoType extends AbstractType
             ->add('telefono', TextType::class)
             ->add('email', TextType::class, ['label' => 'Correo electrónico'])
             ->add('provincia', EntityType::class, array(
-				'class' => Provincia::class,
-				'choice_label' => 'nombre',))
+                'class' => Provincia::class,
+                'choice_label' => 'nombre',
+            ))
+            ->add('file', FileType::class, [
+                'mapped' => false,
+                'constraints' => [
+                    new File([
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid image file',
+                    ])
+                ],
+            ])
             ->add('save', SubmitType::class, array('label' => 'Enviar'));
     }
 }
